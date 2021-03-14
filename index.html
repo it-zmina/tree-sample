@@ -9,12 +9,13 @@
 <script type="text/javascript" src="./lib/proctree.js"></script>
 <script type="module">
 
-    // import * as THREE from './node_modules/three/build/three.module.js'
-    import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r125/build/three.module.js';
+    import * as THREE from './node_modules/three/build/three.module.js'
+    // import * as THREE from './node_modules/three/build/three.js'
+    // import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r124/build/three.module.js';
 
     // Helper function to transform the vertices and faces
     function newTreeGeometry(tree, isTwigs) {
-        let output = new THREE.Geometry();
+        let output = new THREE.Geometry()
 
         tree[ isTwigs ? 'vertsTwig' : 'verts'].forEach(function(v) {
             output.vertices.push(new THREE.Vector3(v[0], v[1], v[2]));
@@ -34,6 +35,18 @@
         return output;
     }
 
+    let camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    camera.position.set( 0, 0, 10 );
+
+    let scene = new THREE.Scene();
+    // scene.background = new THREE.Color( 0x000000 );
+
+    let renderer = new THREE.WebGLRenderer( { antialias:true, alpha: true } );
+    renderer.physicallyCorrectLights = true;
+    renderer.toneMapping = THREE.LinearToneMapping;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.VSMShadowMap;
+
     let myTree = new Tree(/* same parameters as previous example */);
 
     let trunkGeo = newTreeGeometry(myTree);
@@ -45,6 +58,22 @@
     let twigsMaterial = new THREE.MeshLambertMaterial( { color: 0x999999, wireframe: false } );
     let twigsMesh = new THREE.Mesh(twigsGeo, twigsMaterial);
     scene.add(twigsMesh); // Use your own scene
+
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild(renderer.domElement);
+
+    animate()
+
+    function animate () {
+        renderer.setAnimationLoop( render );
+    }
+
+    function render() {
+
+        renderer.render( scene, camera );
+    }
+
 </script>
 </body>
 </html>
